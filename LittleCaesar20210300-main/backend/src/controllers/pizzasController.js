@@ -5,6 +5,7 @@
 
 const pizzasController = {};
 
+import pizzas from "../models/pizzas.js";
 //Importo el Schema a utilizar
 
 import pizzasModel from "../models/pizzas.js";
@@ -48,6 +49,105 @@ pizzasController.updatePizza = async (req, res) => {
 pizzasController.deletePizza = async (req, res) => {
     await pizzasModel.findByIdAndDelete(req.params.id);
     res.json({message: "Pizza eliminada correctamente"});
+}
+
+
+pizzasController.getPizzasById = async (req,res) => {
+   try {
+
+    const pizza = await pizzasModel.findById(req.params.id)
+
+    if(!pizza){
+        return res.status(404).json({message: "Pizza no encontrada"})
+    }
+
+    return res.status(200).json(pizza);
+   } catch (error) {
+    console.log("error" + error )
+    res.status(500).json({message: "Internal Server Error"})            
+   }
+}
+
+//Obtener  pizzas con stock  bajo
+
+pizzasController.getLowStock = async (req,res) => {
+    try {
+        
+        const pizzas  = await pizzasModel.find({stock: {$lt: 5}})
+
+        if(!pizzas){
+            return res.status(404).json({message: "No hay pizzas con stock bajo"})
+
+        }
+
+                    return res.status(200).json(pizzas)
+
+
+    } catch (error) {
+            console.log("error" + error )
+             res.status(500).json({message: "Internal Server Error"})         
+    }
+}
+
+
+pizzasController.getPizzaByPriceRange = async (req,res) =>{
+    try {
+            //1 Solicito los datos 
+
+            const {min, max} = req.body
+
+            const pizzas = await pizzasModel.find({
+                price: { $gte: min, $lte: max }
+            })
+
+           if(!pizzas) {
+            return res.status(404).json({message: "Not pizzas with this price range"})
+           }
+
+           return res.status(200).json(pizzas)
+
+
+    } catch (error) {
+         console.log("error" + error )
+             res.status(500).json({message: "Internal Server Error"})       
+    }
+}
+
+//Contar cuentos elementos hay en la coleccion
+pizzasController.countPizzas = async (req,res) => {
+    try {
+        
+        const count = await pizzasModel.countDocuments();
+
+        return res.status(200).json({count})
+
+
+
+    } catch (error) {
+         console.log("error" + error )
+             res.status(500).json({message: "Internal Server Error"})       
+    }
+
+}
+
+pizzasController.getPizzasByName = async (req,res) => {
+
+    try {
+        const {name} = req.body
+        const pizzas = await pizzasModel.find({name: {$regex: name, $options: "i"}})            
+
+        if(!pizzas) {          
+
+            return res.status(404).json({message: "No pizzas found with this name"})
+        }
+
+        return res.status(200).json(pizzas)
+        
+    } catch (error) {
+         console.log("error" + error )
+             res.status(500).json({message: "Internal Server Error"})       
+    }
+
 }
 
 export default pizzasController
