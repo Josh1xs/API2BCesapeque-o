@@ -38,4 +38,5 @@ branchesController.deleteBranch = async (req, res) => {
     res.json({message: "Sucursal eliminada correctamente"});
 }
 
+
 export default branchesController
