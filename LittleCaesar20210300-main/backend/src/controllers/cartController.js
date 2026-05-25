@@ -9,12 +9,10 @@ const cartController = {}
 cartController.getAllCarts = async (req,res) => {
     try {
         
-        const carts = await cartModel.find().populate("customerId", "name email").populate("productId","name")
+        const carts = await cartModel.find().populate("customerId", "name email").populate("products.productId","name")
 
         return res.status(200).json(carts)
     
-        
-
     } catch (error) {
          console.log("error" + error)
         return res.status(500).json({message: "Internal Server Error"})

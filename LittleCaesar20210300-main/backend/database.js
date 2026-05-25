@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-mongoose.connect("mongodb://localhost:27017/littlecaesarDB")
+mongoose.connect("mongodb://localhost:27017/littlecaesar2DBs")
 
 //Comprobar que todo funciona
 
